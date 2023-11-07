@@ -1,0 +1,831 @@
+Private Sub Workbook_Open()
+    ' Insérez ici le code que vous souhaitez exécuter à l'ouverture du fichier
+    ' Par exemple, vous pouvez appeler votre procédure TraiterDonnees ici
+End Sub
+
+
+Sub TraiterDonnees()
+    ' Vérifier si l'onglet DataSet5 existe
+    Dim DataSet5Exists As Boolean
+    DataSet5Exists = False
+    
+    For Each ws In ThisWorkbook.Sheets
+        If ws.Name = "DataSet5" Then
+            DataSet5Exists = True
+            Exit For
+        End If
+    Next ws
+
+    ' Si DataSet5 n'existe pas, le créer
+    If Not DataSet5Exists Then
+        ThisWorkbook.Sheets.Add(After:=ThisWorkbook.Sheets(ThisWorkbook.Sheets.Count)).Name = "DataSet5"
+    Else
+        ' Supprimer le contenu de DataSet5 s'il existe
+        ThisWorkbook.Sheets("DataSet5").UsedRange.Clear
+    End If
+    
+    ' Vérifie si le bouton "Recherche UPI" existe dans l'onglet "Model" et le supprime s'il est présent
+    'Dim btn As Shape
+    'For Each btn In ThisWorkbook.Sheets("Model").Shapes
+    '    If btn.Name = "btnRechercheUPI" Then
+    '        btn.Delete
+    '        Exit For
+    '    End If
+    'Next btn
+
+    ' Copier la ligne 5 de l'onglet Model et la coller sur la ligne 1 de l'onglet DataSet5
+    ThisWorkbook.Sheets("Model").Rows(5).Copy Destination:=ThisWorkbook.Sheets("DataSet5").Rows(1)
+    
+    ' Crée un bouton "Recherche UPI" dans l'onglet Model
+    'With ThisWorkbook.Sheets("Model").Buttons.Add(2, 10, 100, 30)
+    '    .Caption = "Recherche UPI"
+    '    .Name = "btnRechercheUPI"
+    '    .OnAction = "Feuil1.OuvrirBoiteDialogue"
+    'End With
+    
+    ' Définissez la couleur de remplissage de la cellule (fonction pour définir la couleur de la cellule colonne A)
+    ' If y<>2
+        ' If ThisWorkbook.Sheets("DataSet5").Cells(y-1, 1).Interior.Color = RGB(218, 150, 148) Then
+        '   If ThisWorkbook.Sheets("DataSet5").Cells(y-1, 3) = If ThisWorkbook.Sheets("DataSet5").Cells(y, 3) Then
+        '       If ThisWorkbook.Sheets("DataSet5").Cells(y-1, 6) = If ThisWorkbook.Sheets("DataSet5").Cells(y, 6) Then
+        '           ThisWorkbook.Sheets("DataSet5").Cells(y-1, 1).Interior.Color = RGB(218, 150, 148)
+        '       Else
+        '           ThisWorkbook.Sheets("DataSet5").Cells(y-1, 1).Interior.Color = RGB(196, 215, 155)
+        '       End If
+        '   Else
+        '       ThisWorkbook.Sheets("DataSet5").Cells(y-1, 1).Interior.Color = RGB(218, 150, 148)
+        '   End If
+        ' Else
+        '   If ThisWorkbook.Sheets("DataSet5").Cells(y-1, 3) = If ThisWorkbook.Sheets("DataSet5").Cells(y, 3) Then
+        '       If ThisWorkbook.Sheets("DataSet5").Cells(y-1, 6) = If ThisWorkbook.Sheets("DataSet5").Cells(y, 6) Then
+        '           ThisWorkbook.Sheets("DataSet5").Cells(y-1, 1).Interior.Color = RGB(196, 215, 155)
+        '       Else
+        '           ThisWorkbook.Sheets("DataSet5").Cells(y-1, 1).Interior.Color = RGB(218, 150, 148)
+        '       End If
+        '   Else
+        '       ThisWorkbook.Sheets("DataSet5").Cells(y-1, 1).Interior.Color = RGB(218, 150, 148)
+        '   End If
+        ' End If
+    ' Else
+    ' y=2
+    ' End If
+        
+    
+
+    ' Copier les cellules A6 et A7 de l'onglet Model et les coller sur la cellule A2 de l'onglet DataSet5
+    ThisWorkbook.Sheets("Model").Range("A6:A7").Copy Destination:=ThisWorkbook.Sheets("DataSet5").Range("A2")
+
+    ' Trier les colonnes A et E de DataSet1 (à partir de la 2ème ligne)
+    With ThisWorkbook.Sheets("DataSet1")
+        .UsedRange.Sort Key1:=.Range("A2"), Order1:=xlAscending, Key2:=.Range("E2"), Order2:=xlAscending, Header:=xlYes
+    End With
+
+    ' Trier les colonnes A et D de DataSet2
+    With ThisWorkbook.Sheets("DataSet2")
+        .UsedRange.Sort Key1:=.Range("A2"), Order1:=xlAscending, Key2:=.Range("D2"), Order2:=xlAscending, Header:=xlYes
+    End With
+
+    ' Trier les colonnes A et D de DataSet3
+    With ThisWorkbook.Sheets("DataSet3")
+        .UsedRange.Sort Key1:=.Range("A2"), Order1:=xlAscending, Key2:=.Range("D2"), Order2:=xlAscending, Header:=xlYes
+    End With
+
+    ' Trier les colonnes A, F et E de DataSet4
+    With ThisWorkbook.Sheets("DataSet4")
+        .UsedRange.Sort Key1:=.Range("A2"), Order1:=xlAscending, Key2:=.Range("F2"), Order2:=xlAscending, Key3:=.Range("E2"), Order3:=xlAscending, Header:=xlYes
+    End With
+
+    ' Déclarer les variables
+    Dim x As Integer
+    Dim y As Integer
+    x = 2
+    y = 2
+    Dim FinDeRecherche As Integer
+    FinDeRecherche = 0
+
+    Do While FinDeRecherche <> 1
+        If ThisWorkbook.Sheets("DataSet1").Cells(x, 1).Value = "" Then
+                FinDeRecherche = 1
+            End If
+        ' Si la cellule UPI et Date correspondent au meme UPI et date de la ligne d'après
+        If ThisWorkbook.Sheets("DataSet1").Cells(x, 1).Value = ThisWorkbook.Sheets("DataSet1").Cells(x + 1, 1).Value Then
+            If ThisWorkbook.Sheets("DataSet1").Cells(x, 5).Value = ThisWorkbook.Sheets("DataSet1").Cells(x + 1, 5).Value Then
+                ' Copier les cellules de DataSet1 dans DataSet5
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 1).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 2)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 2).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 3)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 3).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 4)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 4).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 5)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 5).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 6)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 6).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 7)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 7).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 8)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 8).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 10)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 9).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 11)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 10).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 12)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 11).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 13)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 12).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 14)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 13).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 15)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 14).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 19)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 15).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 21)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 16).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 20)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 17).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 22)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 18).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 16)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 19).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 23)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 20).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 24)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 21).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 25)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 22).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 26)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 23).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 27)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 24).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 28)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 25).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 29)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 26).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 30)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 27).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 31)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 28).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 32)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 29).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 33)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 30).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 34)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 31).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 36)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 32).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 35)
+                ThisWorkbook.Sheets("DataSet5").Cells(y, 17) = "Individual"
+                ThisWorkbook.Sheets("DataSet5").Cells(y, 18) = "Bonus"
+                
+                ' Définissez la couleur de remplissage de la cellule
+                '   If ThisWorkbook.Sheets("DataSet5").Cells(y, 3) <> "" Then
+                '    If y <> 2 Then
+                '        If ThisWorkbook.Sheets("DataSet5").Cells(y - 1, 1).Interior.Color = RGB(218, 150, 148) Then
+                '           If ThisWorkbook.Sheets("DataSet5").Cells(y - 1, 3) = ThisWorkbook.Sheets("DataSet5").Cells(y, 3) Then
+                '              If ThisWorkbook.Sheets("DataSet5").Cells(y - 1, 6) = ThisWorkbook.Sheets("DataSet5").Cells(y, 6) Then
+                '                  ThisWorkbook.Sheets("DataSet5").Cells(y - 1, 1).Interior.Color = RGB(218, 150, 148)
+                '              Else
+                '                  ThisWorkbook.Sheets("DataSet5").Cells(y - 1, 1).Interior.Color = RGB(196, 215, 155)
+                '              End If
+                '          Else
+                '              ThisWorkbook.Sheets("DataSet5").Cells(y - 1, 1).Interior.Color = RGB(218, 150, 148)
+                '          End If
+                '        Else
+                '         If ThisWorkbook.Sheets("DataSet5").Cells(y - 1, 3) = ThisWorkbook.Sheets("DataSet5").Cells(y, 3) Then
+                '             If ThisWorkbook.Sheets("DataSet5").Cells(y - 1, 6) = ThisWorkbook.Sheets("DataSet5").Cells(y, 6) Then
+                '                  ThisWorkbook.Sheets("DataSet5").Cells(y - 1, 1).Interior.Color = RGB(196, 215, 155)
+                '              Else
+                '                  ThisWorkbook.Sheets("DataSet5").Cells(y - 1, 1).Interior.Color = RGB(218, 150, 148)
+                '              End If
+                '          Else
+                '              ThisWorkbook.Sheets("DataSet5").Cells(y - 1, 1).Interior.Color = RGB(218, 150, 148)
+                '          End If
+                '        End If
+                '    Else
+                '       y = 2
+                '    End If
+                '   Else
+                '    ThisWorkbook.Sheets("DataSet5").Cells(y - 1, 1).Interior.Color = RGB(196, 215, 155)
+                '   End If
+            
+                
+                ' Incrémentation des variables x et y
+                x = x + 1
+                y = y + 1
+                
+                ' Insérer une nouvelle ligne dans DataSet5
+                ThisWorkbook.Sheets("DataSet5").Rows(y).Insert Shift:=xlShiftDown
+                
+                
+            'Si juste le UPI correspond alors finir le tour et passer à la période suivante
+            Else
+                ' Copier les cellules de DataSet1 dans DataSet5
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 1).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 2)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 2).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 3)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 3).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 4)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 4).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 5)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 5).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 6)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 6).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 7)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 7).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 8)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 8).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 10)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 9).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 11)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 10).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 12)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 11).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 13)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 12).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 14)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 13).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 15)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 14).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 19)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 15).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 21)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 16).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 20)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 17).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 22)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 18).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 16)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 19).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 23)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 20).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 24)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 21).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 25)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 22).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 26)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 23).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 27)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 24).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 28)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 25).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 29)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 26).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 30)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 27).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 31)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 28).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 32)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 29).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 33)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 30).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 34)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 31).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 36)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 32).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 35)
+                ThisWorkbook.Sheets("DataSet5").Cells(y, 17) = "Individual"
+                ThisWorkbook.Sheets("DataSet5").Cells(y, 18) = "Bonus"
+                
+                
+                ' Création d'une variable qui va stocker le UPI
+                Dim UPIb As String
+                UPIb = ThisWorkbook.Sheets("DataSet5").Cells(y, 2)
+                
+                ' Incrémentation de la variable y
+                y = y + 1
+                
+                ' Création de la variable z pour DataSet2 afin de repérer la ligne et variable de sortie de la boucle sb
+                Dim z As Integer
+                z = 2
+                Dim sb As Integer
+                sb = 0
+                
+                ' Début de la boucle pour copier les ligne de DataSet2 vers DataSet5
+                Do While sb <> 1
+                    ' Si la cellule UPI et Date correspondent au meme UPI et date de la ligne d'après
+                        If ThisWorkbook.Sheets("DataSet2").Cells(z, 1).Value = ThisWorkbook.Sheets("DataSet1").Cells(x, 2).Value Then
+                            If ThisWorkbook.Sheets("DataSet2").Cells(z, 4).Value = ThisWorkbook.Sheets("DataSet1").Cells(x, 5).Value Then
+                                
+                                ' Insérer une nouvelle ligne dans DataSet5
+                                ThisWorkbook.Sheets("DataSet5").Rows(y).Insert Shift:=xlShiftDown
+                                ThisWorkbook.Sheets("DataSet5").Cells(y, 2) = UPIb
+                                ThisWorkbook.Sheets("DataSet2").Cells(z, 1).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 3)
+                                ThisWorkbook.Sheets("DataSet2").Cells(z, 2).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 4)
+                                ThisWorkbook.Sheets("DataSet2").Cells(z, 3).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 5)
+                                ThisWorkbook.Sheets("DataSet2").Cells(z, 4).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 6)
+                                ThisWorkbook.Sheets("DataSet2").Cells(z, 5).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 7)
+                                ThisWorkbook.Sheets("DataSet2").Cells(z, 6).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 8)
+                                ThisWorkbook.Sheets("DataSet2").Cells(z, 7).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 16)
+                                ThisWorkbook.Sheets("DataSet2").Cells(z, 8).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 19)
+                                ThisWorkbook.Sheets("DataSet2").Cells(z, 9).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 20)
+                                ThisWorkbook.Sheets("DataSet2").Cells(z, 10).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 15)
+                                ThisWorkbook.Sheets("DataSet2").Cells(z, 14).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 9)
+                                ThisWorkbook.Sheets("DataSet1").Cells(x, 8).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 10)
+                                ThisWorkbook.Sheets("DataSet1").Cells(x, 9).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 11)
+                                ThisWorkbook.Sheets("DataSet1").Cells(x, 10).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 12)
+                                ThisWorkbook.Sheets("DataSet1").Cells(x, 11).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 13)
+                                ThisWorkbook.Sheets("DataSet1").Cells(x, 12).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 14)
+                                ThisWorkbook.Sheets("DataSet1").Cells(x, 25).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 29)
+                                ThisWorkbook.Sheets("DataSet1").Cells(x, 26).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 30)
+                                ThisWorkbook.Sheets("DataSet1").Cells(x, 27).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 31)
+                                ThisWorkbook.Sheets("DataSet1").Cells(x, 28).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 32)
+                                ThisWorkbook.Sheets("DataSet1").Cells(x, 29).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 33)
+                                ThisWorkbook.Sheets("DataSet1").Cells(x, 30).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 34)
+                                ThisWorkbook.Sheets("DataSet1").Cells(x, 31).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 36)
+                                ThisWorkbook.Sheets("DataSet1").Cells(x, 32).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 35)
+                                ThisWorkbook.Sheets("DataSet5").Cells(y, 17) = "Individual"
+                                
+                                
+                                ' Boucle pour ramener les information de DataSet4 en relation avec les lignes DataSet2
+                                ' Création de la variable z pour DataSet2 afin de repérer la ligne et variable de sortie de la boucle sb
+                                    Dim z2 As Integer
+                                    z2 = 2
+                                    Dim sb2 As Integer
+                                    sb2 = 0
+                                    
+                                    ' Début de la boucle pour copier les ligne de DataSet2 vers DataSet5
+                                    Do While sb2 <> 1
+                                    
+                                        ' Si la cellule UPI et Date correspondent au meme UPI et date de la ligne d'après
+                                        ' MsgBox "Contenu de la variable z2 : " & z2
+                                        ' MsgBox "Contenu de la variable x : " & x
+                                            If ThisWorkbook.Sheets("DataSet4").Cells(z2, 1).Value = ThisWorkbook.Sheets("DataSet1").Cells(x, 1).Value Then
+                                                If ThisWorkbook.Sheets("DataSet4").Cells(z2, 6).Value = ThisWorkbook.Sheets("DataSet1").Cells(x, 5).Value Then
+                                                    If ThisWorkbook.Sheets("DataSet4").Cells(z2, 10).Value = ThisWorkbook.Sheets("DataSet5").Cells(y, 20).Value Then
+                                                        If ThisWorkbook.Sheets("DataSet4").Cells(z2, 9).Value = "Individual Objectives" Then
+                                                          ' copier les informations manquantes mais présentes dans DataSet4 vers DataSet5
+                                                          ThisWorkbook.Sheets("DataSet4").Cells(z2, 9).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 18)
+                                                          ThisWorkbook.Sheets("DataSet5").Cells(y, 23).Value = 0
+                                                          ThisWorkbook.Sheets("DataSet5").Cells(y, 24).Value = 100
+                                                          ThisWorkbook.Sheets("DataSet5").Cells(y, 25).Value = 150
+                                                          z2 = z2 + 1
+                                                          sb2 = 1
+                                                          
+                                                        Else
+                                                          ' copier les informations manquantes mais présentes dans DataSet4 vers DataSet5
+                                                          ThisWorkbook.Sheets("DataSet4").Cells(z2, 9).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 18)
+                                                          ThisWorkbook.Sheets("DataSet5").Cells(y, 23).Value = 80
+                                                          ThisWorkbook.Sheets("DataSet5").Cells(y, 24).Value = 100
+                                                          ThisWorkbook.Sheets("DataSet5").Cells(y, 25).Value = 180
+                                                          z2 = z2 + 1
+                                                          sb2 = 1
+                                                          
+                                                        End If
+                                                          ' suite a venir
+                                                    Else
+                                                        z2 = z2 + 1
+                                                    End If
+                                                Else
+                                                    z2 = z2 + 1
+                                                    ' suite a venir
+                                                End If
+                                            Else
+                                                If ThisWorkbook.Sheets("DataSet4").Cells(z2, 1).Value = "" Then
+                                                    sb2 = 1
+                                                Else
+                                                    z2 = z2 + 1
+                                                ' suite a venir
+                                                End If
+                                            End If
+                                    Loop
+                                
+                                
+                                z = z + 1
+                                y = y + 1
+                                
+                                
+                                
+                                ' suite a venir
+                            Else
+                                z = z + 1
+                                ' suite a venir
+                            End If
+                        Else
+                            If ThisWorkbook.Sheets("DataSet2").Cells(z, 1).Value = "" Then
+                                sb = 1
+                            Else
+                                z = z + 1
+                            ' suite a venir
+                            End If
+                        End If
+                Loop
+                
+  'Test DataSet3
+                
+                ' Création de la variable zz pour DataSet3 afin de repérer la ligne et variable de sortie de la boucle sb
+                Dim zz As Integer
+                zz = 2
+                Dim sbz As Integer
+                sbz = 0
+                
+                ' Début de la boucle pour copier les ligne de DataSet3 vers DataSet5
+                Do While sbz <> 1
+                    ' Si la cellule UPI et Date correspondent au meme UPI et date de la ligne d'après
+                        If ThisWorkbook.Sheets("DataSet3").Cells(zz, 1).Value = ThisWorkbook.Sheets("DataSet1").Cells(x, 2).Value Then
+                            If ThisWorkbook.Sheets("DataSet3").Cells(zz, 4).Value = ThisWorkbook.Sheets("DataSet1").Cells(x, 5).Value Then
+                                
+                                ' Insérer une nouvelle ligne dans DataSet5
+                                ThisWorkbook.Sheets("DataSet5").Rows(y).Insert Shift:=xlShiftDown
+                                ThisWorkbook.Sheets("DataSet5").Cells(y, 2) = UPIb
+                                ThisWorkbook.Sheets("DataSet3").Cells(zz, 1).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 3)
+                                ThisWorkbook.Sheets("DataSet3").Cells(zz, 2).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 4)
+                                ThisWorkbook.Sheets("DataSet3").Cells(zz, 3).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 5)
+                                ThisWorkbook.Sheets("DataSet3").Cells(zz, 4).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 6)
+                                ThisWorkbook.Sheets("DataSet3").Cells(zz, 5).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 7)
+                                ThisWorkbook.Sheets("DataSet3").Cells(zz, 6).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 8)
+                                ThisWorkbook.Sheets("DataSet3").Cells(zz, 7).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 16)
+                                ThisWorkbook.Sheets("DataSet3").Cells(zz, 8).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 19)
+                                ThisWorkbook.Sheets("DataSet3").Cells(zz, 9).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 20)
+                                ThisWorkbook.Sheets("DataSet3").Cells(zz, 10).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 15)
+                                ThisWorkbook.Sheets("DataSet3").Cells(zz, 14).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 9)
+                                ThisWorkbook.Sheets("DataSet1").Cells(x, 8).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 10)
+                                ThisWorkbook.Sheets("DataSet1").Cells(x, 9).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 11)
+                                ThisWorkbook.Sheets("DataSet1").Cells(x, 10).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 12)
+                                ThisWorkbook.Sheets("DataSet1").Cells(x, 11).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 13)
+                                ThisWorkbook.Sheets("DataSet1").Cells(x, 12).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 14)
+                                ThisWorkbook.Sheets("DataSet1").Cells(x, 25).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 29)
+                                ThisWorkbook.Sheets("DataSet1").Cells(x, 26).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 30)
+                                ThisWorkbook.Sheets("DataSet1").Cells(x, 27).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 31)
+                                ThisWorkbook.Sheets("DataSet1").Cells(x, 28).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 32)
+                                ThisWorkbook.Sheets("DataSet1").Cells(x, 29).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 33)
+                                ThisWorkbook.Sheets("DataSet1").Cells(x, 30).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 34)
+                                ThisWorkbook.Sheets("DataSet1").Cells(x, 31).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 36)
+                                ThisWorkbook.Sheets("DataSet1").Cells(x, 32).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 35)
+                                ThisWorkbook.Sheets("DataSet5").Cells(y, 17) = "Collective"
+                                
+                                
+                                ' Boucle pour ramener les information de DataSet4 en relation avec les lignes DataSet3
+                                ' Création de la variable z pour DataSet4 afin de repérer la ligne et variable de sortie de la boucle sb
+                                    Dim zz2 As Integer
+                                    zz2 = 2
+                                    Dim sbz2 As Integer
+                                    sbz2 = 0
+                                    
+                                    ' Début de la boucle pour copier les ligne de DataSet4 vers DataSet5
+                                    Do While sbz2 <> 1
+                                        ' Si la cellule UPI et Date correspondent au meme UPI et date de la ligne d'après
+                                            If ThisWorkbook.Sheets("DataSet4").Cells(zz2, 1).Value = ThisWorkbook.Sheets("DataSet1").Cells(x, 1).Value Then
+                                                If ThisWorkbook.Sheets("DataSet4").Cells(zz2, 6).Value = ThisWorkbook.Sheets("DataSet1").Cells(x, 5).Value Then
+                                                    If ThisWorkbook.Sheets("DataSet4").Cells(zz2, 10).Value = ThisWorkbook.Sheets("DataSet5").Cells(y, 20).Value Then
+                                                        If ThisWorkbook.Sheets("DataSet4").Cells(zz2, 9).Value = "Individual Objectives" Then
+                                                          ' copier les informations manquantes mais présentes dans DataSet4 vers DataSet5
+                                                          ThisWorkbook.Sheets("DataSet4").Cells(zz2, 9).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 18)
+                                                          ThisWorkbook.Sheets("DataSet5").Cells(y, 23).Value = 0
+                                                          ThisWorkbook.Sheets("DataSet5").Cells(y, 24).Value = 100
+                                                          ThisWorkbook.Sheets("DataSet5").Cells(y, 25).Value = 150
+                                                          zz2 = zz2 + 1
+                                                          sbz2 = 1
+                                                        Else
+                                                          ' copier les informations manquantes mais présentes dans DataSet4 vers DataSet5
+                                                          ThisWorkbook.Sheets("DataSet4").Cells(zz2, 9).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 18)
+                                                          ThisWorkbook.Sheets("DataSet5").Cells(y, 23).Value = 80
+                                                          ThisWorkbook.Sheets("DataSet5").Cells(y, 24).Value = 100
+                                                          ThisWorkbook.Sheets("DataSet5").Cells(y, 25).Value = 180
+                                                          zz2 = zz2 + 1
+                                                          sbz2 = 1
+                                                        End If
+                                                          ' suite a venir
+                                                    Else
+                                                        zz2 = zz2 + 1
+                                                    End If
+                                                Else
+                                                    zz2 = zz2 + 1
+                                                    ' suite a venir
+                                                End If
+                                            Else
+                                                If ThisWorkbook.Sheets("DataSet4").Cells(zz2, 1).Value = "" Then
+                                                    sbz2 = 1
+                                                Else
+                                                    zz2 = zz2 + 1
+                                                ' suite a venir
+                                                End If
+                                            End If
+                                    Loop
+                                
+                                
+                                zz = zz + 1
+                                y = y + 1
+                                
+                                
+                                
+                                ' suite a venir
+                            Else
+                                zz = zz + 1
+                                ' suite a venir
+                            End If
+                        Else
+                            If ThisWorkbook.Sheets("DataSet3").Cells(zz, 1).Value = "" Then
+                                sbz = 1
+                            Else
+                                zz = zz + 1
+                            ' suite a venir
+                            End If
+                        End If
+                Loop
+                
+  'Fin du test DataSet3
+                
+                ' Incrémentation de la variable x
+                x = x + 1
+            End If
+        ' Si le UPI ne correspond pas au UPI de la ligne suivante, finir le toure sortir de la boucle
+        Else
+            
+            
+             ' Copier les cellules de DataSet1 dans DataSet5
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 1).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 2)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 2).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 3)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 3).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 4)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 4).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 5)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 5).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 6)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 6).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 7)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 7).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 8)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 8).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 10)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 9).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 11)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 10).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 12)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 11).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 13)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 12).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 14)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 13).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 15)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 14).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 19)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 15).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 21)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 16).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 20)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 17).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 22)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 18).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 16)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 19).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 23)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 20).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 24)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 21).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 25)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 22).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 26)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 23).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 27)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 24).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 28)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 25).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 29)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 26).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 30)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 27).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 31)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 28).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 32)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 29).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 33)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 30).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 34)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 31).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 36)
+                ThisWorkbook.Sheets("DataSet1").Cells(x, 32).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 35)
+                If UPIb = "" Then
+                    ThisWorkbook.Sheets("DataSet5").Cells(y, 17) = ""
+                    ThisWorkbook.Sheets("DataSet5").Cells(y, 18) = ""
+                Else
+                    ThisWorkbook.Sheets("DataSet5").Cells(y, 17) = "Individual"
+                    ThisWorkbook.Sheets("DataSet5").Cells(y, 18) = "Bonus"
+                End If
+                
+                ' Création de la variable z pour DataSet2 afin de repérer la ligne et variable de sortie de la boucle sb
+                Dim z3 As Integer
+                z3 = 2
+                Dim sb3 As Integer
+                sb3 = 0
+                
+                ' Début de la boucle pour copier les ligne de DataSet2 vers DataSet5
+                Do While sb3 <> 1
+                    ' Si la cellule UPI et Date correspondent au meme UPI et date de la ligne d'après
+                        If ThisWorkbook.Sheets("DataSet2").Cells(z3, 1).Value = ThisWorkbook.Sheets("DataSet1").Cells(x, 2).Value Then
+                            If ThisWorkbook.Sheets("DataSet2").Cells(z3, 4).Value = ThisWorkbook.Sheets("DataSet1").Cells(x, 5).Value Then
+                                
+                                ' Insérer une nouvelle ligne dans DataSet5
+                                y = y + 1
+                                ThisWorkbook.Sheets("DataSet5").Rows(y).Insert Shift:=xlShiftDown
+                                ThisWorkbook.Sheets("DataSet5").Cells(y, 2) = UPIb
+                                ThisWorkbook.Sheets("DataSet2").Cells(z3, 1).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 3)
+                                ThisWorkbook.Sheets("DataSet2").Cells(z3, 2).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 4)
+                                ThisWorkbook.Sheets("DataSet2").Cells(z3, 3).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 5)
+                                ThisWorkbook.Sheets("DataSet2").Cells(z3, 4).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 6)
+                                ThisWorkbook.Sheets("DataSet2").Cells(z3, 5).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 7)
+                                ThisWorkbook.Sheets("DataSet2").Cells(z3, 6).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 8)
+                                ThisWorkbook.Sheets("DataSet2").Cells(z3, 7).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 16)
+                                ThisWorkbook.Sheets("DataSet2").Cells(z3, 8).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 19)
+                                ThisWorkbook.Sheets("DataSet2").Cells(z3, 9).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 20)
+                                ThisWorkbook.Sheets("DataSet2").Cells(z3, 10).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 15)
+                                ThisWorkbook.Sheets("DataSet2").Cells(z3, 14).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 9)
+                                ThisWorkbook.Sheets("DataSet1").Cells(x, 8).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 10)
+                                ThisWorkbook.Sheets("DataSet1").Cells(x, 9).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 11)
+                                ThisWorkbook.Sheets("DataSet1").Cells(x, 10).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 12)
+                                ThisWorkbook.Sheets("DataSet1").Cells(x, 11).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 13)
+                                ThisWorkbook.Sheets("DataSet1").Cells(x, 12).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 14)
+                                ThisWorkbook.Sheets("DataSet1").Cells(x, 25).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 29)
+                                ThisWorkbook.Sheets("DataSet1").Cells(x, 26).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 30)
+                                ThisWorkbook.Sheets("DataSet1").Cells(x, 27).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 31)
+                                ThisWorkbook.Sheets("DataSet1").Cells(x, 28).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 32)
+                                ThisWorkbook.Sheets("DataSet1").Cells(x, 29).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 33)
+                                ThisWorkbook.Sheets("DataSet1").Cells(x, 30).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 34)
+                                ThisWorkbook.Sheets("DataSet1").Cells(x, 31).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 36)
+                                ThisWorkbook.Sheets("DataSet1").Cells(x, 32).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 35)
+                                ThisWorkbook.Sheets("DataSet5").Cells(y, 17) = "Individual"
+                                z3 = z3 + 1
+                                
+                                ' Boucle pour ramener les information de DataSet4 en relation avec les lignes DataSet2
+                                ' Création de la variable z pour DataSet2 afin de repérer la ligne et variable de sortie de la boucle sb
+                                    Dim z4 As Integer
+                                    z4 = 2
+                                    Dim sb4 As Integer
+                                    sb4 = 0
+                                    
+                                    ' Début de la boucle pour copier les ligne de DataSet2 vers DataSet5
+                                    Do While sb4 <> 1
+                                        ' Si la cellule UPI et Date correspondent au meme UPI et date de la ligne d'après
+                                            If ThisWorkbook.Sheets("DataSet4").Cells(z4, 1).Value = ThisWorkbook.Sheets("DataSet1").Cells(x, 1).Value Then
+                                                If ThisWorkbook.Sheets("DataSet4").Cells(z4, 6).Value = ThisWorkbook.Sheets("DataSet1").Cells(x, 5).Value Then
+                                                    If ThisWorkbook.Sheets("DataSet4").Cells(z4, 10).Value = ThisWorkbook.Sheets("DataSet5").Cells(y, 20).Value Then
+                                                        If ThisWorkbook.Sheets("DataSet4").Cells(z4, 9).Value = "Individual Objectives" Then
+                                                          ' copier les informations manquantes mais présentes dans DataSet4 vers DataSet5
+                                                          ThisWorkbook.Sheets("DataSet4").Cells(z4, 9).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 18)
+                                                          ThisWorkbook.Sheets("DataSet5").Cells(y, 23).Value = 0
+                                                          ThisWorkbook.Sheets("DataSet5").Cells(y, 24).Value = 100
+                                                          ThisWorkbook.Sheets("DataSet5").Cells(y, 25).Value = 150
+                                                          z4 = z4 + 1
+                                                          sb4 = 1
+                                                        Else
+                                                          ' copier les informations manquantes mais présentes dans DataSet4 vers DataSet5
+                                                          ThisWorkbook.Sheets("DataSet4").Cells(z4, 9).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 18)
+                                                          ThisWorkbook.Sheets("DataSet5").Cells(y, 23).Value = 80
+                                                          ThisWorkbook.Sheets("DataSet5").Cells(y, 24).Value = 100
+                                                          ThisWorkbook.Sheets("DataSet5").Cells(y, 25).Value = 180
+                                                          z4 = z2 + 1
+                                                          sb4 = 1
+                                                        End If
+                                                          ' suite a venir
+                                                    Else
+                                                        z4 = z4 + 1
+                                                    End If
+                                                Else
+                                                    z4 = z4 + 1
+                                                    ' suite a venir
+                                                End If
+                                            Else
+                                                If ThisWorkbook.Sheets("DataSet4").Cells(z4, 1).Value = "" Then
+                                                    sb4 = 1
+                                                Else
+                                                    z4 = z4 + 1
+                                                ' suite a venir
+                                                End If
+                                            End If
+                                            If ThisWorkbook.Sheets("DataSet4").Cells(z4, 1).Value = ThisWorkbook.Sheets("DataSet1").Cells(x, 2).Value Then
+                                                If ThisWorkbook.Sheets("DataSet4").Cells(z4, 6).Value = ThisWorkbook.Sheets("DataSet1").Cells(x, 5).Value Then
+                                                    If ThisWorkbook.Sheets("DataSet4").Cells(z4, 10).Value = "" Then
+                                                        If ThisWorkbook.Sheets("DataSet4").Cells(z4, 9).Value = "Individual Objectives" Then
+                                                          ' copier les informations manquantes mais présentes dans DataSet4 vers DataSet5
+                                                          ThisWorkbook.Sheets("DataSet4").Cells(z4, 9).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 18)
+                                                          ThisWorkbook.Sheets("DataSet5").Cells(y, 23).Value = 0
+                                                          ThisWorkbook.Sheets("DataSet5").Cells(y, 24).Value = 100
+                                                          ThisWorkbook.Sheets("DataSet5").Cells(y, 25).Value = 150
+                                                          z4 = z4 + 1
+                                                          sb4 = 1
+                                                        Else
+                                                          ' copier les informations manquantes mais présentes dans DataSet4 vers DataSet5
+                                                          ThisWorkbook.Sheets("DataSet4").Cells(z4, 9).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 18)
+                                                          ThisWorkbook.Sheets("DataSet5").Cells(y, 23).Value = 80
+                                                          ThisWorkbook.Sheets("DataSet5").Cells(y, 24).Value = 100
+                                                          ThisWorkbook.Sheets("DataSet5").Cells(y, 25).Value = 180
+                                                          z4 = z2 + 1
+                                                          sb4 = 1
+                                                        End If
+                                                          ' suite a venir
+                                                    Else
+                                                        z4 = z4 + 1
+                                                    End If
+                                                Else
+                                                    z4 = z4 + 1
+                                                    ' suite a venir
+                                                End If
+                                            Else
+                                                If ThisWorkbook.Sheets("DataSet4").Cells(z4, 1).Value = "" Then
+                                                    sb4 = 1
+                                                Else
+                                                    z4 = z4 + 1
+                                                ' suite a venir
+                                                End If
+                                            End If
+                                    Loop
+                                
+                                
+                                ' suite a venir
+                            Else
+                                z3 = z3 + 1
+                                ' suite a venir
+                            End If
+                        Else
+                            If ThisWorkbook.Sheets("DataSet2").Cells(z3, 1).Value = "" Then
+                                sb3 = 1
+                            Else
+                                z3 = z3 + 1
+                            ' suite a venir
+                            End If
+                        End If
+                Loop
+                
+'Test DataSet3
+                
+                ' Création de la variable zz pour DataSet3 afin de repérer la ligne et variable de sortie de la boucle sb
+                Dim zy As Integer
+                zy = 2
+                Dim sby As Integer
+                sby = 0
+                
+                ' Début de la boucle pour copier les ligne de DataSet3 vers DataSet5
+                Do While sby <> 1
+                        'MsgBox "Contenu de la variable zy : " & zy
+                        'MsgBox "Contenu de la variable x : " & x
+                    ' Si la cellule UPI et Date correspondent au meme UPI et date de la ligne d'après
+                        If ThisWorkbook.Sheets("DataSet3").Cells(zy, 1).Value = ThisWorkbook.Sheets("DataSet1").Cells(x, 2).Value Then
+                            If ThisWorkbook.Sheets("DataSet3").Cells(zy, 4).Value = ThisWorkbook.Sheets("DataSet1").Cells(x, 5).Value Then
+                                
+                                ' Insérer une nouvelle ligne dans DataSet5
+                                y = y + 1
+                                ThisWorkbook.Sheets("DataSet5").Rows(y).Insert Shift:=xlShiftDown
+                                ThisWorkbook.Sheets("DataSet5").Cells(y, 2) = UPIb
+                                ThisWorkbook.Sheets("DataSet3").Cells(zy, 1).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 3)
+                                ThisWorkbook.Sheets("DataSet3").Cells(zy, 2).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 4)
+                                ThisWorkbook.Sheets("DataSet3").Cells(zy, 3).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 5)
+                                ThisWorkbook.Sheets("DataSet3").Cells(zy, 4).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 6)
+                                ThisWorkbook.Sheets("DataSet3").Cells(zy, 5).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 7)
+                                ThisWorkbook.Sheets("DataSet3").Cells(zy, 6).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 8)
+                                ThisWorkbook.Sheets("DataSet3").Cells(zy, 7).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 16)
+                                ThisWorkbook.Sheets("DataSet3").Cells(zy, 8).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 19)
+                                ThisWorkbook.Sheets("DataSet3").Cells(zy, 9).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 20)
+                                ThisWorkbook.Sheets("DataSet3").Cells(zy, 10).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 15)
+                                ThisWorkbook.Sheets("DataSet3").Cells(zy, 14).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 9)
+                                ThisWorkbook.Sheets("DataSet1").Cells(x, 8).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 10)
+                                ThisWorkbook.Sheets("DataSet1").Cells(x, 9).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 11)
+                                ThisWorkbook.Sheets("DataSet1").Cells(x, 10).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 12)
+                                ThisWorkbook.Sheets("DataSet1").Cells(x, 11).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 13)
+                                ThisWorkbook.Sheets("DataSet1").Cells(x, 12).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 14)
+                                ThisWorkbook.Sheets("DataSet1").Cells(x, 25).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 29)
+                                ThisWorkbook.Sheets("DataSet1").Cells(x, 26).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 30)
+                                ThisWorkbook.Sheets("DataSet1").Cells(x, 27).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 31)
+                                ThisWorkbook.Sheets("DataSet1").Cells(x, 28).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 32)
+                                ThisWorkbook.Sheets("DataSet1").Cells(x, 29).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 33)
+                                ThisWorkbook.Sheets("DataSet1").Cells(x, 30).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 34)
+                                ThisWorkbook.Sheets("DataSet1").Cells(x, 31).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 36)
+                                ThisWorkbook.Sheets("DataSet1").Cells(x, 32).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 35)
+                                ThisWorkbook.Sheets("DataSet5").Cells(y, 17) = "Collective"
+                                
+                                ' Boucle pour ramener les information de DataSet4 en relation avec les lignes DataSet2
+                                ' Création de la variable z pour DataSet2 afin de repérer la ligne et variable de sortie de la boucle sb
+                                    Dim zy2 As Integer
+                                    zy2 = 2
+                                    Dim sby2 As Integer
+                                    sby2 = 0
+                                    
+                                    ' Début de la boucle pour copier les ligne de DataSet3 vers DataSet5
+                                    Do While sby2 <> 1
+                                        ' Si la cellule UPI et Date correspondent au meme UPI et date de la ligne d'après
+                                            If ThisWorkbook.Sheets("DataSet4").Cells(zy2, 1).Value = ThisWorkbook.Sheets("DataSet1").Cells(x, 1).Value Then
+                                                If ThisWorkbook.Sheets("DataSet4").Cells(zy2, 6).Value = ThisWorkbook.Sheets("DataSet1").Cells(x, 5).Value Then
+                                                    If ThisWorkbook.Sheets("DataSet4").Cells(zy2, 10).Value = ThisWorkbook.Sheets("DataSet5").Cells(y, 20).Value Then
+                                                        If ThisWorkbook.Sheets("DataSet4").Cells(zy2, 9).Value = "Individual Objectives" Then
+                                                          ' copier les informations manquantes mais présentes dans DataSet4 vers DataSet5
+                                                          ThisWorkbook.Sheets("DataSet4").Cells(zy2, 9).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 18)
+                                                          ThisWorkbook.Sheets("DataSet5").Cells(y, 23).Value = 0
+                                                          ThisWorkbook.Sheets("DataSet5").Cells(y, 24).Value = 100
+                                                          ThisWorkbook.Sheets("DataSet5").Cells(y, 25).Value = 150
+                                                          zy2 = zy2 + 1
+                                                          sby2 = 1
+                                                        Else
+                                                          ' copier les informations manquantes mais présentes dans DataSet4 vers DataSet5
+                                                          ThisWorkbook.Sheets("DataSet4").Cells(zy2, 9).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 18)
+                                                          ThisWorkbook.Sheets("DataSet5").Cells(y, 23).Value = 80
+                                                          ThisWorkbook.Sheets("DataSet5").Cells(y, 24).Value = 100
+                                                          ThisWorkbook.Sheets("DataSet5").Cells(y, 25).Value = 180
+                                                          zy2 = zy2 + 1
+                                                          sby2 = 1
+                                                        End If
+                                                          ' suite a venir
+                                                    Else
+                                                        zy2 = zy2 + 1
+                                                    End If
+                                                    
+                                                Else
+                                                    zy2 = zy2 + 1
+                                                    ' suite a venir
+                                                End If
+                                            Else
+                                                If ThisWorkbook.Sheets("DataSet4").Cells(zy2, 1).Value = "" Then
+                                                    sby2 = 1
+                                                Else
+                                                    zy2 = zy2 + 1
+                                                ' suite a venir
+                                                End If
+                                            End If
+                                            If ThisWorkbook.Sheets("DataSet4").Cells(zy2, 1).Value = ThisWorkbook.Sheets("DataSet1").Cells(x, 1).Value Then
+                                                If ThisWorkbook.Sheets("DataSet4").Cells(zy2, 6).Value = ThisWorkbook.Sheets("DataSet1").Cells(x, 5).Value Then
+                                                    If ThisWorkbook.Sheets("DataSet4").Cells(zy2, 10).Value = "" Then
+                                                        If ThisWorkbook.Sheets("DataSet4").Cells(zy2, 9).Value = "Individual Objectives" Then
+                                                          ' copier les informations manquantes mais présentes dans DataSet4 vers DataSet5
+                                                          ThisWorkbook.Sheets("DataSet4").Cells(zy2, 9).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 18)
+                                                          ThisWorkbook.Sheets("DataSet5").Cells(y, 23).Value = 0
+                                                          ThisWorkbook.Sheets("DataSet5").Cells(y, 24).Value = 100
+                                                          ThisWorkbook.Sheets("DataSet5").Cells(y, 25).Value = 150
+                                                          zy2 = zy2 + 1
+                                                          sby2 = 1
+                                                        Else
+                                                          ' copier les informations manquantes mais présentes dans DataSet4 vers DataSet5
+                                                          ThisWorkbook.Sheets("DataSet4").Cells(zy2, 9).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 18)
+                                                          ThisWorkbook.Sheets("DataSet5").Cells(y, 23).Value = 80
+                                                          ThisWorkbook.Sheets("DataSet5").Cells(y, 24).Value = 100
+                                                          ThisWorkbook.Sheets("DataSet5").Cells(y, 25).Value = 180
+                                                          zy2 = zy2 + 1
+                                                          sby2 = 1
+                                                        End If
+                                                          ' suite a venir
+                                                    Else
+                                                        zy2 = zy2 + 1
+                                                    End If
+                                                    
+                                                Else
+                                                    zy2 = zy2 + 1
+                                                    ' suite a venir
+                                                End If
+                                            Else
+                                                If ThisWorkbook.Sheets("DataSet4").Cells(zy2, 1).Value = "" Then
+                                                    sby2 = 1
+                                                Else
+                                                    zy2 = zy2 + 1
+                                                ' suite a venir
+                                                End If
+                                            End If
+                                    Loop
+                                
+                                
+                                zy = zy + 1
+                                y = y + 1
+                                
+                                
+                                
+                                ' suite a venir
+                            Else
+                                zy = zy + 1
+                                ' suite a venir
+                            End If
+                        Else
+                            If ThisWorkbook.Sheets("DataSet3").Cells(zy, 1).Value = "" Then
+                                sby = 1
+                            Else
+                                zy = zy + 1
+                            ' suite a venir
+                            End If
+                        End If
+                Loop
+                
+  'Fin du test DataSet3
+                
+                x = x + 1
+                y = y + 1
+                
+        End If
+    Loop
+
+    ' Afficher une boîte de dialogue avec le message "Test ok" pour valider que le process est allé au bout
+    MsgBox "Process Succed"
+    
+End Sub
+
+
+Sub OuvrirBoiteDialogue()
+    Dim UPI As String
+    UPI = InputBox("Entrez l'UPI:")
+    If UPI <> "" Then
+        MsgBox "Contenu de la variable UPI : " & UPI
+    End If
+End Sub
+
