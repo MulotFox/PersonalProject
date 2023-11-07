@@ -145,37 +145,6 @@ Sub TraiterDonnees()
                 ThisWorkbook.Sheets("DataSet1").Cells(x, 32).Copy ThisWorkbook.Sheets("DataSet5").Cells(y, 35)
                 ThisWorkbook.Sheets("DataSet5").Cells(y, 17) = "Individual"
                 ThisWorkbook.Sheets("DataSet5").Cells(y, 18) = "Bonus"
-                
-                ' Définissez la couleur de remplissage de la cellule
-                '   If ThisWorkbook.Sheets("DataSet5").Cells(y, 3) <> "" Then
-                '    If y <> 2 Then
-                '        If ThisWorkbook.Sheets("DataSet5").Cells(y - 1, 1).Interior.Color = RGB(218, 150, 148) Then
-                '           If ThisWorkbook.Sheets("DataSet5").Cells(y - 1, 3) = ThisWorkbook.Sheets("DataSet5").Cells(y, 3) Then
-                '              If ThisWorkbook.Sheets("DataSet5").Cells(y - 1, 6) = ThisWorkbook.Sheets("DataSet5").Cells(y, 6) Then
-                '                  ThisWorkbook.Sheets("DataSet5").Cells(y - 1, 1).Interior.Color = RGB(218, 150, 148)
-                '              Else
-                '                  ThisWorkbook.Sheets("DataSet5").Cells(y - 1, 1).Interior.Color = RGB(196, 215, 155)
-                '              End If
-                '          Else
-                '              ThisWorkbook.Sheets("DataSet5").Cells(y - 1, 1).Interior.Color = RGB(218, 150, 148)
-                '          End If
-                '        Else
-                '         If ThisWorkbook.Sheets("DataSet5").Cells(y - 1, 3) = ThisWorkbook.Sheets("DataSet5").Cells(y, 3) Then
-                '             If ThisWorkbook.Sheets("DataSet5").Cells(y - 1, 6) = ThisWorkbook.Sheets("DataSet5").Cells(y, 6) Then
-                '                  ThisWorkbook.Sheets("DataSet5").Cells(y - 1, 1).Interior.Color = RGB(196, 215, 155)
-                '              Else
-                '                  ThisWorkbook.Sheets("DataSet5").Cells(y - 1, 1).Interior.Color = RGB(218, 150, 148)
-                '              End If
-                '          Else
-                '              ThisWorkbook.Sheets("DataSet5").Cells(y - 1, 1).Interior.Color = RGB(218, 150, 148)
-                '          End If
-                '        End If
-                '    Else
-                '       y = 2
-                '    End If
-                '   Else
-                '    ThisWorkbook.Sheets("DataSet5").Cells(y - 1, 1).Interior.Color = RGB(196, 215, 155)
-                '   End If
             
                 
                 ' Incrémentation des variables x et y
@@ -788,7 +757,7 @@ Sub TraiterDonnees()
                                 
                                 
                                 zy = zy + 1
-                                y = y + 1
+                                'y = y + 1
                                 
                                 
                                 
@@ -813,6 +782,49 @@ Sub TraiterDonnees()
                 y = y + 1
                 
         End If
+    Loop
+
+Dim Ccellule As Integer
+Ccellule = 2
+
+    '   boucle pour colorer les cellules colonnes A en fonction de la période
+    Do While Ccellule <> 0
+        ' Définissez la couleur de remplissage de la cellule
+                   If ThisWorkbook.Sheets("DataSet5").Cells(Ccellule, 3) <> "" Then
+                    If Ccellule <> 2 Then
+                        If ThisWorkbook.Sheets("DataSet5").Cells(Ccellule - 1, 1).Interior.Color = RGB(218, 150, 148) Then
+                           If ThisWorkbook.Sheets("DataSet5").Cells(Ccellule - 1, 3) = ThisWorkbook.Sheets("DataSet5").Cells(Ccellule, 3) Then
+                              If ThisWorkbook.Sheets("DataSet5").Cells(Ccellule - 1, 6) = ThisWorkbook.Sheets("DataSet5").Cells(Ccellule, 6) Then
+                                  ThisWorkbook.Sheets("DataSet5").Cells(Ccellule, 1).Interior.Color = RGB(218, 150, 148)
+                                  Ccellule = Ccellule + 1
+                              Else
+                                  ThisWorkbook.Sheets("DataSet5").Cells(Ccellule, 1).Interior.Color = RGB(196, 215, 155)
+                                  Ccellule = Ccellule + 1
+                              End If
+                          Else
+                              ThisWorkbook.Sheets("DataSet5").Cells(Ccellule, 1).Interior.Color = RGB(218, 150, 148)
+                              Ccellule = Ccellule + 1
+                          End If
+                        Else
+                         If ThisWorkbook.Sheets("DataSet5").Cells(Ccellule - 1, 3) = ThisWorkbook.Sheets("DataSet5").Cells(Ccellule, 3) Then
+                             If ThisWorkbook.Sheets("DataSet5").Cells(Ccellule - 1, 6) = ThisWorkbook.Sheets("DataSet5").Cells(Ccellule, 6) Then
+                                  ThisWorkbook.Sheets("DataSet5").Cells(Ccellule, 1).Interior.Color = RGB(196, 215, 155)
+                                  Ccellule = Ccellule + 1
+                              Else
+                                  ThisWorkbook.Sheets("DataSet5").Cells(Ccellule, 1).Interior.Color = RGB(218, 150, 148)
+                                  Ccellule = Ccellule + 1
+                              End If
+                          Else
+                              ThisWorkbook.Sheets("DataSet5").Cells(Ccellule, 1).Interior.Color = RGB(218, 150, 148)
+                              Ccellule = Ccellule + 1
+                          End If
+                        End If
+                    Else
+                       Ccellule = 3
+                    End If
+                   Else
+                    Ccellule = 0
+                   End If
     Loop
 
     ' Afficher une boîte de dialogue avec le message "Test ok" pour valider que le process est allé au bout
